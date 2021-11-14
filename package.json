@@ -1,0 +1,16 @@
+{
+  "name": "note-openssl",
+  "version": "1.0.0",
+  "description": "openssl笔记",
+  "main": "index.js",
+  "scripts":{
+      "docs:dev": "vuepress dev docs",
+      "docs:build": "vuepress build docs"
+  },
+  "repository": "https://github.com/xizhan1995/note-openssl.git",
+  "author": "chenxizhan <chenxizhan1995@163.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.8.2"
+  }
+}
