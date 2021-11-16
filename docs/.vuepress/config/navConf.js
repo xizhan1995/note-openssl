@@ -1,6 +1,10 @@
 
 module.exports = [
-    { text:"Readme", link : "/" },
-    { text:"Readme", link : "/" },
-    { text:"Readme", link : "/" }
+    {
+        text: "origin",
+        children: [
+            "/origin/openssl",
+            "/origin/openssl3",
+        ]
+    }
 ]
