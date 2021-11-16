@@ -3,25 +3,56 @@ title: openssl 命令行学习笔记
 date: 2021-11-14
 ---
 
-# openssl 基础
-OpenSSL 是一个开源项目，其组成主要包括一下三个组件：
-- openssl：多用途的命令行工具
-- libcrypto：加密算法库
-- libssl：加密模块应用库，实现了ssl及tls
+# openssl 学习笔记
+## 回忆-骨架
+- openssl 是什么
+- 我只学习命令行接口，主要是为了生成一些自签名的TLS证书，开发时使用
+- 起始目标是搭建自己的小型 CA
+  - 从零，生成一个 CA 证书和若干终端证书
+  - 小型ca
 
-openssl可以实现：秘钥证书管理、对称加密和非对称加密。
+由此衍生出来其它目标
+- 证书结构和字段
+  - 一个证书之所以成为CA证书/终端证书，它们是通过哪些字段区分的？对应openssl命令行工具如何设置？
 
-- [Secure Salted Password Hashing - How to do it Properly](https://crackstation.net/hashing-security.htm)
-- [OpenSSL官网](https://www.openssl.org/)
-- [openssl用法详解](https://www.cnblogs.com/yangxiaolan/p/6256838.html)
+知识点
+- x509 证书对应标准 rfc5280
+- x509 证书结构，用 openssl 查看 x509 证书
+- 证书扩展名，.pem .der 等证书格式
+- pki、ca、证书的基本概念
+- 私有ca，权威ca，let's encrypt
 
-2020年2月16日
+- openssl 对称加密
+  - aes
+    - 解密 java 的 javax.crypt 包生成的 aes 加密数据
+    - aes256cbc
+    - aes256ebc
+    - ev 和 key
+    - pbkdf2
 
-openssl version
-OpenSSL 1.1.1d  10 Sep 2019
+- openssl 非对称加密
+  - openssl 生成、查看 rsa 密钥
+  - openssl 生成、查看 ec 密钥
+  - 用 rsa 或 ec 密钥加密、签名
 
-## 配置文件的位置
-许多命令支持从配置文件读取部分或全部的参数，用 -config 选项指定配置文件，或者
-用环境变量 OPENSSL_CONF。如果既没有指定 -config 也没有设置 OPENSSL_CONFIG 变量，、
-则使用默认路径下的 openssl.conf 文件作为配置文件，默认路径在编译时指定，
-使用 `openssl version -d` 确认默认配置路径。
+- openssl 签发证书
+  - 好多种方式，放开，收紧，放开；换汤不换药，同一种功能，多种命令行接口，
+    同时，配置的灵活性，既足够，也不足够，配置项太多了。
+
+- 完全没有接触过 openssl 的人看这个教程学习 openssl，我应该怎么组织文章结构？
+  - ？
+  - 一个简单的例子
+  - 解释例子
+  -
+- 我希望牢固掌握openssl的知识点，这个笔记应当能帮助我学习 openssl --- 做笔记的过程就是梳理、形成体系结构的过程
+- 将来的快速参考
+  - 如果我忘记了，希望看这里能快速唤起相关回忆，应当如何组织这个笔记？
+    Ans：
+    - 对于初次学习的，各种细节都要覆盖到
+    - 但对于复习，一定要抓住主脉络，省略细节，避免大量细节淹没主要知识主干
+  - 需要用 openssl 完成某一目的，要拿来就能用，又该如何处理？
+    Ans：
+    - 整理用例
+    - 对用例进行要点解释
+    - 有缺漏的点，补上
+## 笔记结构 待续
