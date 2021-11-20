@@ -15,17 +15,42 @@
 
 [OpenSSL Cookbook](https://www.feistyduck.com/library/openssl-cookbook/online/ch-openssl.html)
 
-命令行没大变动。
 
-另外，没有配置文件时，req 命令的报错 `unable to find 'distinguished_name' in config`
-openssl 3 不报错了。
+## 与 1.1.1 的区别
+不全。
+
+- API接口的接入方式发生了变化
+- 命令行好像变化不大
+- 版本号的语义发生了变化
+
+openssl 3 修复了`unable to find 'distinguished_name' in config`的报错。
+:::details
+屏蔽掉配置文件时，调用 req 命令会报错 `unable to find 'distinguished_name' in config`
 ```bash
-openssl req -config /dev/null -new -keyout demo.key -out demo.csr -subj '/CN=demo' -nodes
-
+openssl req -config /dev/null \
+  -new -keyout demo.key \
+  -out demo.csr \
+  -subj '/CN=demo' -nodes
 ```
+
+输出
+```bash
+Generating a RSA private key
+.............................................................+++++
+....................................+++++
+writing new private key to 'demo.key'
+-----
+unable to find 'distinguished_name' in config
+problems making Certificate Request
+140101273249152:error:0E06D06C:configuration file routines:NCONF_get_string:no value:../crypto/conf/conf_lib.c:273:group=req name=distinguished_name
+```
+:::
 
 ## CeontOS 8 源码编译安装 openssl
 2021-11-09
+
+当前（2021-11-20）常见的操作系统好像的软件库好像还是用的 openssl 1.1.x 版本，要使用 3.0.0，得要自己手动编译安装。
+
 下载解压
 ```bash
 curl --limit-rate 5m -L -o openssl-3.0.0.tar.gz https://github.com/openssl/openssl/archive/refs/tags/openssl-3.0.0.tar.gz
@@ -66,3 +91,7 @@ sudo make -sj $(($(nproc)+1)) install
 
 sudo ln -s  /opt/ssl/bin/openssl /usr/local/bin/
 ```
+
+PS:我对手动编译安装Linux程序只会一些皮毛，又忍不住想尝试一下，怕不小心破坏了其它依赖于 openssl 库的程序的功能，所以
+把它编译成静态库，仅供自己尝试。
+

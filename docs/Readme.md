@@ -1,58 +1,24 @@
 ---
-title: openssl 命令行学习笔记
+home: true
 date: 2021-11-14
+description: 网站首页
+actions:
+  - text: 基础
+    link: /basic/01-about.md
+
+  - text: 示例
+    link: /demo/
+
+  - text: outline
+    link: outline.md
+    type: secondary
 ---
 
-# openssl 学习笔记
-## 回忆-骨架
-- openssl 是什么
-- 我只学习命令行接口，主要是为了生成一些自签名的TLS证书，开发时使用
-- 起始目标是搭建自己的小型 CA
-  - 从零，生成一个 CA 证书和若干终端证书
-  - 小型ca
+```bash
+$ openssl version
+OpenSSL 1.1.1i  8 Dec 2020
 
-由此衍生出来其它目标
-- 证书结构和字段
-  - 一个证书之所以成为CA证书/终端证书，它们是通过哪些字段区分的？对应openssl命令行工具如何设置？
-
-知识点
-- x509 证书对应标准 rfc5280
-- x509 证书结构，用 openssl 查看 x509 证书
-- 证书扩展名，.pem .der 等证书格式
-- pki、ca、证书的基本概念
-- 私有ca，权威ca，let's encrypt
-
-- openssl 对称加密
-  - aes
-    - 解密 java 的 javax.crypt 包生成的 aes 加密数据
-    - aes256cbc
-    - aes256ebc
-    - ev 和 key
-    - pbkdf2
-
-- openssl 非对称加密
-  - openssl 生成、查看 rsa 密钥
-  - openssl 生成、查看 ec 密钥
-  - 用 rsa 或 ec 密钥加密、签名
-
-- openssl 签发证书
-  - 好多种方式，放开，收紧，放开；换汤不换药，同一种功能，多种命令行接口，
-    同时，配置的灵活性，既足够，也不足够，配置项太多了。
-
-- 完全没有接触过 openssl 的人看这个教程学习 openssl，我应该怎么组织文章结构？
-  - ？
-  - 一个简单的例子
-  - 解释例子
-  -
-- 我希望牢固掌握openssl的知识点，这个笔记应当能帮助我学习 openssl --- 做笔记的过程就是梳理、形成体系结构的过程
-- 将来的快速参考
-  - 如果我忘记了，希望看这里能快速唤起相关回忆，应当如何组织这个笔记？
-    Ans：
-    - 对于初次学习的，各种细节都要覆盖到
-    - 但对于复习，一定要抓住主脉络，省略细节，避免大量细节淹没主要知识主干
-  - 需要用 openssl 完成某一目的，要拿来就能用，又该如何处理？
-    Ans：
-    - 整理用例
-    - 对用例进行要点解释
-    - 有缺漏的点，补上
-## 笔记结构 待续
+$ openssl help
+$ openssl list
+$ man openssl
+```

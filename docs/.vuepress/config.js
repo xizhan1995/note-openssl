@@ -3,8 +3,8 @@ const navConf = require("./config/navConf.js")
 const sideBar = require("./config/sideBar.js")
 module.exports = {
     lang: "zh-CN",
-    title: "note-openssl",
-    description: "openssl命令行学习笔记",
+    title: "openssl笔记",
+    description: "openssl命令行学习笔记c",
     base: "/note-openssl/",
     themeConfig: {
         navbar: navConf,
