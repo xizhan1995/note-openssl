@@ -45,7 +45,7 @@ openssl 程序是 OpenSSL 提供的命令行接口。它可用于：
 - 计算消息摘要
 - 用口令加解密数据、文件
 - SSL/TLS 客户端与服务的测试
-- 处理 S/MIME 签名或加密过的右键
+- 处理 SMTP/MIME 签名或加密过的邮件
 - 时间戳查询、创建和验证
 
 ## 命令总览
@@ -53,7 +53,7 @@ openssl程序提供了丰富的命令，每个命令有很多选项和参数。�
 使用示例。
 
 许多命令支持从配置文件读取部分或全部的参数，用 -config 选项指定配置文件，或者
-用环境变量 OPENSSL_CONF。如果既没有指定 -config 也没有设置 OPENSSL_CONFIG 变量，、
+用环境变量 OPENSSL_CONF。如果既没有指定 -config 也没有设置 OPENSSL_CONFIG 变量，
 则使用默认路径下的 openssl.conf 文件作为配置文件，默认路径在编译时指定，
 使用 `openssl version -d` 确认默认配置路径。
 
@@ -161,7 +161,7 @@ spread across multiple lines. In addition the sequences \n, \r, \b and \t are re
 > All expansion and escape rules as described above that apply to value also apply to the path of the .include directive.
 ### openssl 库的配置文件
 基于 OpenSSL 开发的程序可以使用 OpenSSL 主配置文件或自定义配置文件自动配置
-OpenSSL 的某些方面。openssl 命令行工具就是这么做到，所有 openssl 子命令默认使用
+OpenSSL 的某些方面。openssl 命令行工具就是这么做的，所有 openssl 子命令默认使用
 OpenSSL 主配置文件的配置，同时也可以指定别的配置文件。
 
 > Applications can automatically configure certain aspects of OpenSSL using the master OpenSSL configuration file, or optionally an alternative configuration
@@ -178,7 +178,7 @@ Q. enable library configuration 是什么意思?
 openssl_conf which is used by the openssl utility. Other applications may use an alternative name such as myapplication_conf.  All library configuration lines
 appear in the default section at the start of the configuration file.
 
-配置节，有一系列 name=value 对组成，name 对应要配置的模块，而 value 的含义则取决于
+配置节，由一系列 name=value 对组成，name 对应要配置的模块，而 value 的含义则取决于
 模块，value 可以是另一个节的名字，其中包含模块的具体配置。
 > The configuration section should consist of a set of name value pairs which contain specific module configuration information. The name represents the name of
 the configuration module. The meaning of the value is module specific: it may, for example, represent a further configuration section containing configuration
@@ -204,7 +204,7 @@ engines = engine_section
 ### 注
 变量展开，如果变量不存在，就会报错。比如，如果引用的环境变量不存在会导致错误。
 解决方案是在默认节中提供默认值，此时如果变量未定义，就会采用默认节中的定义，当然，
-这要求默认节中的定义在扩展之前出现，否则不生效。]
+这要求默认节中的定义在扩展之前出现，否则不生效。\
 例如：
 ```ini
 HOME=/temp
@@ -335,7 +335,7 @@ openssl aes-256-cbc 加密时，要么通过 -K key 和 -iv IV 直接指定 key 
 -P  Print out the key and IV used then immediately exit: don't do any encryption or decryption.
 ```
 
-AES 算法 Key 和 IV 的生成规律：将 hash 结果（第一次 hash 运算时为空）、passphrase 和 salt（nosalt 时为空）拼接后
+AES 算法 Key 和 IV 的生成规则：将 hash 结果（第一次 hash 运算时为空）、passphrase 和 salt（nosalt 时为空）拼接后
 循环做 hash 运算，再根据 AES 所需的 Key 和 IV 的 bit 数取值。
 
 对于 AES-256-CBC 来说，MD5
@@ -357,9 +357,9 @@ AES/ECB/PKCS5Padding
 This allows a rudimentary integrity or password check to be performed. However, since the
 chance of random data passing the test is better than 1 in 256 it isn't a very good test.
 
-[OpenSSL AES 算法中 Key 和 IV 是如何生成的](https://blog.lancitou.net/how-to-generate-key-and-iv-in-openssl-aes/)
-[appsec - How to securely hash passwords?](https://security.stackexchange.com/questions/211/how-to-securely-hash-passwords/31846#31846)
-[encryption - Why would you need a salt for AES-CBS when IV is already randomly generated and stored with the encrypted data?](https://security.stackexchange.com/questions/48000/why-would-you-need-a-salt-for-aes-cbs-when-iv-is-already-randomly-generated-and)
+- [OpenSSL AES 算法中 Key 和 IV 是如何生成的](https://blog.lancitou.net/how-to-generate-key-and-iv-in-openssl-aes/)
+- [appsec - How to securely hash passwords?](https://security.stackexchange.com/questions/211/how-to-securely-hash-passwords/31846#31846)
+- [encryption - Why would you need a salt for AES-CBS when IV is already randomly generated and stored with the encrypted data?](https://security.stackexchange.com/questions/48000/why-would-you-need-a-salt-for-aes-cbs-when-iv-is-already-randomly-generated-and)
 
 ### Q. aes 加密的时候会加入随机的盐，那解密的时候如何得知盐值？
 openssl 将盐保存在加密文件的开头。验证如下：
@@ -430,25 +430,27 @@ done
 ```
 
 1. 解密失败，退出码为1；解密成功，退出码为0
-2. 根据资料，常见迭代次数 10000 以内，有理由认为 openssl 的次数不会超过它，所以暴力尝试是可行的
+2. 根据资料，常见迭代次数 10000 以内，所以暴力尝试是可行的
 
 运行了 1.5 分钟。
-## 实战：openssl 解密java的AES/ECB/PKCS5Padding加密结果
+## 实战：openssl 解密java的AES/ECB/PKCS#5Padding加密结果
 2021-11-02
 
-山东重工集团财务有限公司，现场开发，对接云之家审批流，其回调数据是通过 Java 加密的。
-现在要用 openssl 解密数据。
+项目现场开发时，对接云之家审批流，其回调数据是通过 Java 加密的。
+现在用 openssl 解密数据。
 
 要解密的数据存放在文件 demo.json.enc.base64 中。
 
 解密命令为
 ```bash
 
-$ xxd -g 32 <<< T22cdkEko3flglPe
-00000000: 4e4d65324a4151536e796a474d716666  NMe2JAQSnyjGMqff
-00000010: 0a
+$ echo -n T22cdkEko3flglPe | xxd -ps
+54323263646b456b6f33666c676c5065
 
-$ openssl enc -aes-128-ecb -d -K 4e4d65324a4151536e796a474d716666 -in demo.json.enc.base64 -out demo.json  -base64 -A
+# 解密命令
+$ openssl enc -aes-128-ecb -d -K 54323263646b456b6f33666c676c5065 -a -A -in cloud-demo.json.enc.base64 -out cloud-demo.json
+# 对应的加密命令
+$ openssl enc -aes-128-ecb -K 54323263646b456b6f33666c676c5065 -a -A -in cloud-demo.json -out cloud-demo.json.enc.base64
 ```
 
 根据
@@ -461,15 +463,17 @@ String key = "T22cdkEko3flglPe";
 1. openssl 默认使用密码生成 key，而 Java 使用 T22cdkEko3flglPe 二进制形式直接作为 key，
   所以用 xxd 取得对应的16进制形式。
 2. 密钥长度为 32 个字符，对应 128 位，所以确定为 -aes-128-ecb
-3. openssl 默认使用 PKCS#5 方式填充，所以无需指定
-4. -d 表示解密
-5. -base64 表示先对输入文件进行 base64 解码
-6. -A 告诉openssl，base64 内容没有换行。如果不指定这个，openssl 只能解密部分数据。
-7. ecb 模式不需要初始向量（iv），所以不需要指定 -iv 选项。
+3. openssl 默认使用 PKCS#5 方式填充，所以无需指定。另外，好像没有指定填充方式的选项？
+4. openssl 1.1 开始，默认使用 sha1 哈希，所以无需指定，另外，通过 -md sha1 选项可以指定哈希算法
+5. -d 表示解密
+6. -a -base64 表示先对输入文件进行 base64 解码
+7. -A 告诉 openssl，base64 内容没有换行。如果不指定这个，openssl 只能解密部分数据。
+8. ecb 模式不需要初始向量（iv），所以不需要指定 -iv 选项。
 
 ### 附：要解密的数据
+注：数据已经过脱敏处理
 ```
-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
+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
 ```
 ### 附：Java 的加密、解密相关代码段
 ```java
@@ -500,9 +504,7 @@ public class AESEncryptor {
     }
 
     public byte[] encrypt(byte[] data) {
-        Key k = new SecretKeySpec(aesKey.getBytes(CHARSET), ALGORITHM);
-        byte[] raw = k.getEncoded();
-        SecretKeySpec secretKeySpec = new SecretKeySpec(raw, ALGORITHM);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey.getBytes(CHARSET), ALGORITHM);
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
@@ -518,9 +520,7 @@ public class AESEncryptor {
     }
 
     public byte[] decrypt(byte[] data) {
-        Key k = new SecretKeySpec(aesKey.getBytes(CHARSET), ALGORITHM);
-        byte[] raw = k.getEncoded();
-        SecretKeySpec secretKeySpec = new SecretKeySpec(raw, ALGORITHM);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey.getBytes(CHARSET), ALGORITHM);
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
